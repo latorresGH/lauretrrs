@@ -1,7 +1,6 @@
+// Sin frameworks CSS (no Tailwind). Dejamos el pipeline de PostCSS vacío.
 const config = {
-  plugins: {
-    "@tailwindcss/postcss": {},
-  },
+  plugins: {},
 };
 
 export default config;

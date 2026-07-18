@@ -1,0 +1,29 @@
+[
+  {
+    "id": "afterpanch",
+    "title": "AfterPanch",
+    "category": { "es": "App de pedidos", "en": "Ordering app" },
+    "year": "2025",
+    "tags": ["NestJS", "Next.js", "Prisma"],
+    "image": "/images/afterpanch.jpg",
+    "href": "#"
+  },
+  {
+    "id": "nauticapp",
+    "title": "NauticApp",
+    "category": { "es": "Plataforma náutica", "en": "Nautical platform" },
+    "year": "2025",
+    "tags": ["Next.js", "PostgreSQL", "Mapbox"],
+    "image": "/images/nauticapp.jpg",
+    "href": "#"
+  },
+  {
+    "id": "motionlab",
+    "title": "Motion Lab",
+    "category": { "es": "Experimento WebGL", "en": "WebGL experiment" },
+    "year": "2024",
+    "tags": ["Three.js", "GSAP", "WebGL"],
+    "image": "/images/motionlab.jpg",
+    "href": "#"
+  }
+]

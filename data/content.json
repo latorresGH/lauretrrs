@@ -1,0 +1,95 @@
+{
+  "name": "Laureano",
+  "title": "Form & Motion",
+  "bio": "I'm Laureano — an independent designer & developer crafting digital experiences where form meets motion.",
+  "location": "Buenos Aires, AR",
+  "year": "©2026",
+  "showreel": "Showreel 01",
+  "contact": {
+    "email": "tu@email.com",
+    "phone": "+54 9 XXX XXX XXXX"
+  },
+  "nav": [
+    { "label": { "es": "Inicio", "en": "Home" }, "href": "#me" },
+    { "label": { "es": "Trabajos", "en": "Works" }, "href": "#procesos" },
+    { "label": { "es": "Servicios", "en": "Services" }, "href": "#services" },
+    { "label": { "es": "Proceso", "en": "Process" }, "href": "#process" }
+  ],
+  "ctaLabel": { "es": "Contactemos", "en": "Let's talk" },
+  "services": [
+    {
+      "number": "01",
+      "title": { "es": "Desarrollo Full Stack", "en": "Full Stack Development" },
+      "description": {
+        "es": "Aplicaciones web completas de punta a punta, desde la base de datos hasta la interfaz, con foco en rendimiento y escalabilidad.",
+        "en": "End-to-end web applications, from the database to the interface, focused on performance and scalability."
+      },
+      "tags": ["NestJS", "Next.js", "PostgreSQL"]
+    },
+    {
+      "number": "02",
+      "title": { "es": "Diseño de Interfaces", "en": "Interface Design" },
+      "description": {
+        "es": "Interfaces limpias y funcionales que priorizan la experiencia del usuario y la identidad de marca.",
+        "en": "Clean, functional interfaces that prioritize user experience and brand identity."
+      },
+      "tags": ["Figma", "Design Systems", "Prototyping"]
+    },
+    {
+      "number": "03",
+      "title": { "es": "Motion & Interacción", "en": "Motion & Interaction" },
+      "description": {
+        "es": "Animaciones y microinteracciones que le dan vida a los productos digitales.",
+        "en": "Animations and microinteractions that bring digital products to life."
+      },
+      "tags": ["GSAP", "Three.js", "WebGL"]
+    }
+  ],
+  "process": [
+    {
+      "title": { "es": "Descubrimiento", "en": "Discovery" },
+      "detail": {
+        "es": "Entiendo el problema, los objetivos y el contexto antes de escribir una sola línea.",
+        "en": "I understand the problem, goals and context before writing a single line."
+      }
+    },
+    {
+      "title": { "es": "Diseño", "en": "Design" },
+      "detail": {
+        "es": "Traduzco ideas en interfaces y flujos claros, iterando sobre prototipos.",
+        "en": "I translate ideas into clear interfaces and flows, iterating over prototypes."
+      }
+    },
+    {
+      "title": { "es": "Desarrollo", "en": "Development" },
+      "detail": {
+        "es": "Construyo con código limpio, mantenible y performante.",
+        "en": "I build with clean, maintainable and performant code."
+      }
+    },
+    {
+      "title": { "es": "Entrega", "en": "Delivery" },
+      "detail": {
+        "es": "Despliego, mido y refino hasta que el producto brilla.",
+        "en": "I deploy, measure and refine until the product shines."
+      }
+    }
+  ],
+  "footer": {
+    "tagline": {
+      "es": "Construyamos algo increíble juntos.",
+      "en": "Let's build something great together."
+    },
+    "links": [
+      { "label": "GitHub", "href": "https://github.com/" },
+      { "label": "LinkedIn", "href": "https://linkedin.com/in/" },
+      { "label": "Instagram", "href": "https://instagram.com/" }
+    ],
+    "navItems": [
+      { "label": { "es": "Inicio", "en": "Home" }, "href": "#me" },
+      { "label": { "es": "Trabajos", "en": "Works" }, "href": "#procesos" },
+      { "label": { "es": "Servicios", "en": "Services" }, "href": "#services" },
+      { "label": { "es": "Proceso", "en": "Process" }, "href": "#process" }
+    ]
+  }
+}
