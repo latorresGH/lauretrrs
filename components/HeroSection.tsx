@@ -72,7 +72,7 @@ export default function HeroSection() {
 
   return (
     <div
-      id="scroll-root"
+      id="me"
       ref={scopeRef}
       style={{
         position: 'relative',
@@ -156,6 +156,7 @@ export default function HeroSection() {
 
         {/* content */}
         <div
+          className="hero-content"
           style={{
             position: 'relative',
             zIndex: 2,
@@ -167,7 +168,7 @@ export default function HeroSection() {
             pointerEvents: 'none',
           }}
         >
-          <h1 id="headline-top" style={{ margin: 'clamp(64px, 8vh, 96px) 0 0', marginLeft: 35, ...headlineStyle }}>
+          <h1 id="headline-top" className="hero-line" style={{ margin: 'clamp(64px, 8vh, 96px) 0 0', marginLeft: 35, ...headlineStyle }}>
             <span ref={line1Ref} data-reveal style={{ display: 'block', opacity: 0, transform: 'translateY(60px)' }}>
               {t({ es: 'Forma &', en: 'Form &' })}
             </span>
@@ -179,6 +180,7 @@ export default function HeroSection() {
             <span
               ref={line2Ref}
               data-reveal
+              className="hero-line"
               style={{ display: 'block', opacity: 0, transform: 'translateY(60px)', marginLeft: 35, marginRight: 35, ...headlineStyle }}
             >
               {t({ es: 'Movimiento', en: 'Motion' })}

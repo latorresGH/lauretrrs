@@ -162,8 +162,8 @@ export default function FolioScene() {
         </div>
 
         {/* PORT / FOLIO */}
-        <div style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', pointerEvents: 'none' }}>
-          <span ref={portRef} style={{ ...wordStyle, marginRight: 'clamp(10px, 1.2vw, 24px)' }}>
+        <div className="folio-portfolio" style={{ position: 'relative', zIndex: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', pointerEvents: 'none' }}>
+          <span ref={portRef} className="folio-word" style={{ ...wordStyle, marginRight: 'clamp(10px, 1.2vw, 24px)' }}>
             <span
               ref={myRef}
               style={{ display: 'inline-block', maxWidth: 0, opacity: 0, overflow: 'hidden', verticalAlign: 'bottom', willChange: 'max-width, opacity' }}
@@ -172,13 +172,14 @@ export default function FolioScene() {
             </span>
             {t({ es: 'Porta', en: 'Port' })}
           </span>
-          <span ref={folioRef} style={{ ...wordStyle, marginLeft: 'clamp(10px, 1.2vw, 24px)' }}>
+          <span ref={folioRef} className="folio-word" style={{ ...wordStyle, marginLeft: 'clamp(10px, 1.2vw, 24px)' }}>
             {t({ es: 'folio', en: 'Folio' })}
           </span>
         </div>
 
         {/* descripción */}
         <p
+          className="folio-desc"
           style={{
             position: 'absolute',
             left: '50%',

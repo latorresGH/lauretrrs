@@ -94,7 +94,7 @@ export default function ProcessSection() {
 
   return (
     <section
-      id="process-sec"
+      id="process"
       ref={scopeRef}
       style={{ position: 'relative', zIndex: 5, background: '#090906', color: '#f4f3f1', boxSizing: 'border-box', fontFamily: 'var(--font-main)' }}
     >
@@ -112,6 +112,7 @@ export default function ProcessSection() {
         <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '0 clamp(28px, 4vw, 72px)', boxSizing: 'border-box' }}>
           <div
             ref={bignumRef}
+            className="proc-bignum"
             style={{ position: 'absolute', right: 'clamp(20px, 4vw, 90px)', top: '50%', transform: 'translateY(-50%)', fontFamily: "'Bebas Neue', var(--font-display)", fontWeight: 400, fontSize: 'clamp(280px, 42vw, 680px)', lineHeight: 0.7, color: '#171715', pointerEvents: 'none', userSelect: 'none' }}
           >
             1
@@ -126,6 +127,7 @@ export default function ProcessSection() {
                     ref={(el) => {
                       titleRefs.current[i] = el;
                     }}
+                    className="proc-step-title"
                     style={{ fontWeight: 800, fontSize: 'clamp(38px, 6.4vw, 120px)', lineHeight: 0.98, letterSpacing: '-0.04em', textTransform: 'uppercase', color: '#4a4a48', transition: 'color 0.5s ease' }}
                   >
                     {t(step.title)}

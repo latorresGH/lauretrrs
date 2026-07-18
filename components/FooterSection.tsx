@@ -12,9 +12,9 @@ const NAV_ITEMS: { label: Localized; href: string }[] = [
 ];
 
 const SOCIALS = [
-  { label: 'GitHub', href: '#github' },
-  { label: 'LinkedIn', href: '#linkedin' },
-  { label: 'Instagram', href: '#instagram' },
+  { label: 'GitHub', href: 'https://github.com/latorresGH' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/laureano-torres-4872a7296/' },
+  { label: 'Instagram', href: 'https://www.instagram.com/lauretrrs/' },
 ];
 
 const EMAIL = 'laureano26112001@hotmail.com';
@@ -69,7 +69,7 @@ export default function FooterSection() {
   return (
     <footer style={{ position: 'relative', zIndex: 5, background: '#050505', color: '#f4f3f1', overflow: 'hidden', fontFamily: 'var(--font-main)' }}>
       <div style={{ position: 'relative', zIndex: 2, padding: 'clamp(40px, 6vh, 72px) clamp(28px, 4vw, 72px) clamp(24px, 3vw, 36px)', boxSizing: 'border-box', display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr', gap: 'clamp(32px, 5vw, 80px)', flex: 1 }}>
+        <div className="footer-grid" style={{ display: 'grid', gridTemplateColumns: '1.6fr 1fr 1fr', gap: 'clamp(32px, 5vw, 80px)', flex: 1 }}>
           {/* navegación */}
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, fontWeight: 700, marginBottom: 'clamp(20px, 3vh, 34px)' }}>

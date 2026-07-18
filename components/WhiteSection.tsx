@@ -70,7 +70,7 @@ export default function WhiteSection() {
 
   return (
     <section
-      id="white-next"
+      id="procesos"
       ref={scopeRef}
       style={{
         position: 'relative',
@@ -83,9 +83,10 @@ export default function WhiteSection() {
       }}
     >
       {/* ===== BLOCK 1: headline + educación ===== */}
-      <div style={{ position: 'relative', minHeight: '130vh' }}>
+      <div className="wh-block" style={{ position: 'relative', minHeight: '130vh' }}>
         <div
           data-up
+          className="wh-corner-label"
           style={{
             position: 'absolute',
             top: 'clamp(60px, 9vh, 110px)',
@@ -103,6 +104,7 @@ export default function WhiteSection() {
         </div>
         <div
           data-up
+          className="wh-corner-label"
           style={{
             position: 'absolute',
             top: 'clamp(180px, 34vh, 380px)',
@@ -120,11 +122,12 @@ export default function WhiteSection() {
           2023 — 2025
         </div>
 
-        <div style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(70px, 10vh, 120px) 24px 0', textAlign: 'center' }}>
+        <div className="wh-intro" style={{ maxWidth: 1100, margin: '0 auto', padding: 'clamp(70px, 10vh, 120px) 24px 0', textAlign: 'center' }}>
           <div data-up style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase' }}>
             {t({ es: 'Bienvenido a', en: 'Welcome to' })}
           </div>
           <h2
+            className="wh-heading"
             style={{
               margin: 'clamp(28px, 5vh, 56px) 0 0',
               fontWeight: 700,
@@ -154,6 +157,7 @@ export default function WhiteSection() {
         <div
           data-img
           data-par="0.2"
+          className="wh-photo"
           style={{
             position: 'absolute',
             left: 0,
@@ -168,7 +172,7 @@ export default function WhiteSection() {
         </div>
 
         {/* IES story — desplazada center-right */}
-        <div style={{ maxWidth: 560, margin: 'clamp(120px, 20vh, 220px) auto 0', padding: '0 24px', transform: 'translateX(6vw)' }}>
+        <div className="wh-text" style={{ maxWidth: 560, margin: 'clamp(120px, 20vh, 220px) auto 0', padding: '0 24px', transform: 'translateX(6vw)' }}>
           <div data-up>
             <p style={{ margin: 0, fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 400, fontSize: 'clamp(24px, 2.4vw, 36px)', lineHeight: 1.35 }}>
               {t({
@@ -184,16 +188,17 @@ export default function WhiteSection() {
       </div>
 
       {/* ===== BLOCK 2: Streaming (foto derecha) ===== */}
-      <div style={{ position: 'relative', minHeight: '110vh' }}>
+      <div className="wh-block" style={{ position: 'relative', minHeight: '110vh' }}>
         <div
           data-img
           data-par="0.16"
+          className="wh-photo"
           style={{ position: 'absolute', right: 0, top: 0, width: 'min(38vw, 620px)', aspectRatio: '16 / 10', overflow: 'hidden', willChange: 'transform' }}
         >
           <Photo src="/images/streaming.jpg" alt={t({ es: 'Plataforma de Streaming', en: 'Streaming Platform' })} style={{ height: '118%' }} />
         </div>
 
-        <div style={{ boxSizing: 'border-box', width: 'min(620px, 58vw)', padding: 'clamp(140px, 26vh, 300px) 24px 0 clamp(28px, 8vw, 140px)' }}>
+        <div className="wh-text" style={{ boxSizing: 'border-box', width: 'min(620px, 58vw)', padding: 'clamp(140px, 26vh, 300px) 24px 0 clamp(28px, 8vw, 140px)' }}>
           <div data-up style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#8a8a8a' }}>
             {t({ es: '( 01 ) — Práctica profesionalizante 1', en: '( 01 ) — Professional Internship 1' })}
           </div>
@@ -217,16 +222,17 @@ export default function WhiteSection() {
       </div>
 
       {/* ===== BLOCK 3: Náutica (foto izquierda) ===== */}
-      <div style={{ position: 'relative', minHeight: '110vh', marginTop: 'clamp(60px, 10vh, 120px)', paddingBottom: 'clamp(140px, 22vh, 260px)' }}>
+      <div className="wh-block" style={{ position: 'relative', minHeight: '110vh', marginTop: 'clamp(60px, 10vh, 120px)', paddingBottom: 'clamp(140px, 22vh, 260px)' }}>
         <div
           data-img
           data-par="0.16"
+          className="wh-photo"
           style={{ position: 'absolute', left: 0, top: 'clamp(60px, 12vh, 160px)', width: 'min(38vw, 620px)', aspectRatio: '16 / 10', overflow: 'hidden', willChange: 'transform' }}
         >
           <Photo src="/images/nautica.webp" alt={t({ es: 'Guardería Náutica', en: 'Boat Storage Marina' })} style={{ height: '118%' }} />
         </div>
 
-        <div style={{ boxSizing: 'border-box', width: 'min(620px, 58vw)', marginLeft: 'auto', padding: 'clamp(140px, 26vh, 300px) clamp(28px, 8vw, 140px) 0 24px' }}>
+        <div className="wh-text" style={{ boxSizing: 'border-box', width: 'min(620px, 58vw)', marginLeft: 'auto', padding: 'clamp(140px, 26vh, 300px) clamp(28px, 8vw, 140px) 0 24px' }}>
           <div data-up style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.24em', textTransform: 'uppercase', color: '#8a8a8a' }}>
             {t({ es: '( 02 ) — Práctica profesionalizante 2', en: '( 02 ) — Professional Internship 2' })}
           </div>

@@ -5,7 +5,9 @@ import { gsap, useGSAP } from '@/lib/gsap';
 
 /**
  * Cursor personalizado: dot blanco de 10px con mix-blend-mode difference.
- * Sigue el mouse con gsap.quickTo (x/y separados) y aparece al entrar al viewport.
+ * Sigue el mouse 1:1 (sin lag) para no perder de vista el puntero real —
+ * como reemplaza al cursor nativo (cursor:none en body), cualquier retraso
+ * desorienta al usuario.
  */
 export default function Cursor() {
   const dotRef = useRef<HTMLDivElement>(null);
@@ -14,13 +16,9 @@ export default function Cursor() {
     const dot = dotRef.current;
     if (!dot) return;
 
-    const xTo = gsap.quickTo(dot, 'x', { duration: 0.6, ease: 'power3' });
-    const yTo = gsap.quickTo(dot, 'y', { duration: 0.6, ease: 'power3' });
-
     let shown = false;
     const onMove = (e: MouseEvent) => {
-      xTo(e.clientX);
-      yTo(e.clientY);
+      gsap.set(dot, { x: e.clientX, y: e.clientY });
       if (!shown) {
         shown = true;
         gsap.to(dot, { opacity: 1, duration: 0.4 });

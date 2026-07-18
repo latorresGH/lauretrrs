@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import content from '@/data/content.json';
 import { useLanguage } from '@/lib/language';
 import { useContactModal } from '@/lib/contact-modal';
+import { useLenis } from '@/lib/lenis';
 import { gsap } from '@/lib/gsap';
 
 /**
@@ -14,8 +15,26 @@ import { gsap } from '@/lib/gsap';
 export default function Nav() {
   const { t, lang, toggle } = useLanguage();
   const { open: openContactModal } = useContactModal();
+  const lenis = useLenis();
+  const navRef = useRef<HTMLElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
+
+  // --- links del header: scrollea a la sección con Lenis, restando la altura
+  // del nav fijo así el título de destino no queda tapado ---
+  const onNavLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const target = document.querySelector(href);
+    if (!target) return;
+    e.preventDefault();
+    const navBottom = navRef.current?.getBoundingClientRect().bottom ?? 0;
+    const offset = -(navBottom + 16);
+    if (lenis) {
+      lenis.scrollTo(target as HTMLElement, { offset });
+    } else {
+      const y = target.getBoundingClientRect().top + window.scrollY + offset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
 
   // --- L de puntitos: los puntos se dispersan al acercarse el cursor ---
   useEffect(() => {
@@ -130,7 +149,9 @@ export default function Nav() {
 
   return (
     <nav
+      ref={navRef}
       data-reveal
+      className="site-nav"
       style={{
         position: 'fixed',
         top: 32,
@@ -155,11 +176,12 @@ export default function Nav() {
       </div>
 
       {/* links */}
-      <div style={{ display: 'flex', gap: 20, alignItems: 'center', justifySelf: 'center', paddingRight: '20vw', fontSize: 24 }}>
+      <div className="nav-links" style={{ display: 'flex', gap: 20, alignItems: 'center', justifySelf: 'center', paddingRight: '20vw', fontSize: 24 }}>
         {content.nav.map((item) => (
           <a
             key={item.href}
             href={item.href}
+            onClick={(e) => onNavLinkClick(e, item.href)}
             onMouseEnter={onLinkEnter}
             onMouseLeave={onLinkLeave}
             style={{ position: 'relative', color: '#f4f3f1', padding: '4px 14px', overflow: 'hidden' }}
@@ -174,13 +196,14 @@ export default function Nav() {
       </div>
 
       {/* derecha — toggle idioma + CTA magnético */}
-      <div style={{ justifySelf: 'end', display: 'flex', alignItems: 'center', gap: 20 }}>
+      <div className="nav-right" style={{ justifySelf: 'end', display: 'flex', alignItems: 'center', gap: 20 }}>
         <button onClick={toggle} aria-label="Toggle language" style={{ color: '#8a8a8a', fontSize: 16, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
           {lang === 'es' ? 'EN' : 'ES'}
         </button>
         <a
           ref={ctaRef}
           href="#contacto"
+          className="nav-cta"
           onClick={(e) => {
             e.preventDefault();
             openContactModal();

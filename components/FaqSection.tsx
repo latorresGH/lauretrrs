@@ -99,12 +99,12 @@ export default function FaqSection() {
     >
       {/* LEFT */}
       <div>
-        <div style={{ position: 'sticky', top: 'clamp(90px, 12vh, 140px)' }}>
+        <div className="faq-left-sticky" style={{ position: 'sticky', top: 'clamp(90px, 12vh, 140px)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, fontWeight: 700 }}>
             <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', background: '#8a8a8a' }} />
             {t({ es: 'A tener en cuenta', en: 'Good to know' })}
           </div>
-          <div style={{ marginTop: 'clamp(40px, 30vh, 320px)' }}>
+          <div className="faq-left-cta-wrap" style={{ marginTop: 'clamp(40px, 30vh, 320px)' }}>
             <div style={{ fontWeight: 500, fontSize: 17, lineHeight: 1.4, color: '#8a8a8a', maxWidth: 220 }}>
               {t({ es: '¿Tenés más preguntas?', en: 'Got more questions?' })}
               <br />

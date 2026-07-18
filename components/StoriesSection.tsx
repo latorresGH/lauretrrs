@@ -423,7 +423,7 @@ export default function StoriesSection() {
         </h2>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 0.85fr) 2.3fr', gap: 'clamp(32px, 4vw, 70px)', padding: 'clamp(48px, 7vh, 90px) clamp(28px, 4vw, 72px) clamp(80px, 12vh, 140px)' }}>
+      <div className="st-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 0.85fr) 2.3fr', gap: 'clamp(32px, 4vw, 70px)', padding: 'clamp(48px, 7vh, 90px) clamp(28px, 4vw, 72px) clamp(80px, 12vh, 140px)' }}>
         {/* LEFT: testimonios */}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -469,6 +469,7 @@ export default function StoriesSection() {
                   svcTitleRefs.current[i] = el;
                 }}
                 onMouseEnter={() => onSvcEnter(i)}
+                className="svc-name"
                 style={svcTitle}
               >
                 {t(name)}
@@ -497,8 +498,8 @@ export default function StoriesSection() {
       </div>
 
       {/* MIS SERVICIOS: título full-width + filas de servicio interactivas */}
-      <div style={{ padding: 'clamp(80px, 12vh, 160px) 0 0' }}>
-        <h2 data-letters style={{ margin: 0, padding: '0 0.5vw', fontFamily: 'var(--font-animo), var(--font-main)', fontWeight: 800, fontVariationSettings: '"wdth" 500', fontSize: 'clamp(40px, 12.8vw, 320px)', lineHeight: 0.92, letterSpacing: '-0.03em', textTransform: 'uppercase', whiteSpace: 'nowrap', textAlign: 'center' }}>
+      <div id="services" style={{ padding: 'clamp(80px, 12vh, 160px) 0 0' }}>
+        <h2 data-letters className="svc-heading" style={{ margin: 0, padding: '0 0.5vw', fontFamily: 'var(--font-animo), var(--font-main)', fontWeight: 800, fontVariationSettings: '"wdth" 500', fontSize: 'clamp(40px, 12.8vw, 320px)', lineHeight: 0.92, letterSpacing: '-0.03em', textTransform: 'uppercase', whiteSpace: 'nowrap', textAlign: 'center' }}>
           {t({ es: 'Mis Servicios', en: 'My Services' })}
         </h2>
       </div>
@@ -519,7 +520,7 @@ export default function StoriesSection() {
               <span className="svc-arrow" style={{ fontSize: 'clamp(26px, 3vw, 48px)', color: '#8a8a8a', willChange: 'transform', transition: 'color 0.3s ease' }}>→</span>
             </div>
             <div className="svc-body" style={{ position: 'relative', height: 0, overflow: 'hidden' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(28px, 4vw, 80px)', padding: '6px clamp(28px, 4vw, 72px) clamp(30px, 5vh, 56px) calc(90px + clamp(48px, 7vw, 128px))' }}>
+              <div className="svc-body-inner" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'clamp(28px, 4vw, 80px)', padding: '6px clamp(28px, 4vw, 72px) clamp(30px, 5vh, 56px) calc(90px + clamp(48px, 7vw, 128px))' }}>
                 <p style={{ margin: 0, fontWeight: 500, fontSize: 'clamp(14px, 1.1vw, 17px)', lineHeight: 1.65, color: '#3a3a38' }}>{t(row.p)}</p>
                 <div className="svc-tags" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignContent: 'start' }}>
                   {row.tags[lang].map((tag) => (
