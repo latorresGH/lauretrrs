@@ -1,238 +1,290 @@
 'use client';
 
-import { useRef } from 'react';
-import dynamic from 'next/dynamic';
+import { useEffect, useRef } from 'react';
+import Image from 'next/image';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { useLanguage } from '@/lib/language';
-import Nav from './Nav';
-import FolioScene from './FolioScene';
+import { useLenis } from '@/lib/lenis';
+import ContactButton from './ContactButton';
 
-const HeroParticles = dynamic(() => import('./HeroParticles'), { ssr: false });
+const PROJECTS = [
+  { title: 'Náutica', src: '/images/nautica.webp' },
+  { title: 'Streaming', src: '/images/streaming.jpg' },
+  { title: 'Stickeando', src: '/images/exp-stickeando.jpg' },
+  { title: 'Rush Fragances', src: '/images/exp-perfumes.jpg' },
+  { title: 'Afterpanch', src: '/images/exp-afterpanch.jpg' },
+];
+const SETS = 3; // el set se repite para que la tira sea infinita
 
-const GRAIN_BG =
-  "url('data:image/svg+xml;utf8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%222%22 stitchTiles=%22stitch%22/%3E%3CfeColorMatrix type=%22saturate%22 values=%220%22/%3E%3C/filter%3E%3Crect width=%22300%22 height=%22300%22 filter=%22url(%23n)%22 opacity=%220.55%22/%3E%3C/svg%3E')";
+const labelFont = "var(--font-animo600), 'Helvetica Neue', sans-serif";
+const mont = "var(--font-montserrat), 'Helvetica Neue', Helvetica, Arial, sans-serif";
 
 /**
- * Hero — port fiel del HTML. Layout editorial: "Form &" arriba-izquierda,
- * "Motion" abajo-derecha, meta row, y bloque About abajo-izquierda que aparece
- * cerca del final del scroll (los titulares se retiran hacia arriba).
- *
- * El #scroll-root (500vh) contiene el #hero-root (sticky) y, anidado, el
- * FolioScene (absolute) que sube por encima en el último tramo. La convergencia
- * PORT/FOLIO y el brillo/parallax del hero los maneja FolioScene.
+ * Hero (v59) — tira infinita de proyectos arriba, "LAURE" gigante + Acerca abajo.
+ * Es sticky: al scrollear, la segunda sección (#procesos) sube y lo tapa, mientras
+ * el contenido del hero baja con parallax. El Nav recién aparece en esa segunda sección.
  */
 export default function HeroSection() {
-  const { t } = useLanguage();
-  const scopeRef = useRef<HTMLDivElement>(null);
-  const line1Ref = useRef<HTMLSpanElement>(null);
-  const line2Ref = useRef<HTMLSpanElement>(null);
-  const aboutRef = useRef<HTMLDivElement>(null);
-  const descShown = useRef(false);
+  const { t, lang, toggle } = useLanguage();
+  const lenis = useLenis();
+  const heroRef = useRef<HTMLElement>(null);
+  const stripRef = useRef<HTMLDivElement>(null);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const wordRef = useRef<HTMLHeadingElement>(null);
+  const curRef = useRef<HTMLDivElement>(null);
+  // tamaños aleatorios por proyecto (se generan en el cliente → sin mismatch de hidratación)
+  const sizes = useRef<{ w: number; nw: number; r: number }[]>([]);
 
-  // Reveal secuencial inicial (nav, Form &, Motion, meta) — data-reveal
+  const layout = () => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    const VW = hero.clientWidth || window.innerWidth;
+    const VH = hero.clientHeight || window.innerHeight;
+    const narrow = VW < 820;
+    if (mainRef.current) mainRef.current.style.gridTemplateColumns = narrow ? 'minmax(0,1fr)' : 'minmax(0,1.7fr) minmax(0,1fr)';
+    if (wordRef.current) wordRef.current.style.fontSize = narrow ? 'min(32vw,22svh)' : 'clamp(96px,min(22vw,36svh),460px)';
+    const bottom = bottomRef.current;
+    const avail = Math.max(150, VH - (bottom ? bottom.offsetHeight : 0) - 16);
+    if (stripRef.current) stripRef.current.style.height = avail + 'px';
+    const maxF = avail - 40;
+    hero.querySelectorAll<HTMLElement>('[data-card]').forEach((c) => {
+      const s = sizes.current[+(c.dataset.card as string)];
+      if (!s) return;
+      c.style.width = (narrow ? s.nw : s.w) + 'vw';
+      (c.querySelector('[data-frame]') as HTMLElement).style.height = Math.round(Math.max(90, maxF * s.r)) + 'px';
+    });
+  };
+
+  useEffect(() => {
+    // valores repartidos en tramos y mezclados → se nota la diferencia entre cards
+    const spread = (min: number, max: number) => {
+      const n = PROJECTS.length;
+      const vals = Array.from({ length: n }, (_, i) => min + ((i + Math.random()) / n) * (max - min));
+      for (let i = n - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [vals[i], vals[j]] = [vals[j], vals[i]];
+      }
+      return vals;
+    };
+    const rs = spread(0.62, 1); // fracción del alto disponible (el ancho es igual para todas)
+    sizes.current = PROJECTS.map((_, i) => ({ w: 28, nw: 64, r: rs[i] }));
+    layout();
+    const ro = new ResizeObserver(layout);
+    if (heroRef.current) ro.observe(heroRef.current);
+    window.addEventListener('resize', layout);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', layout);
+    };
+  }, []);
+
   useGSAP(
     () => {
-      gsap.to('[data-reveal]', {
-        opacity: 1,
-        y: 0,
-        duration: 1.3,
-        ease: 'power3.out',
-        stagger: 0.13,
-        delay: 0.2,
+      const hero = heroRef.current!;
+      const track = trackRef.current!;
+      const bottom = bottomRef.current!;
+      const cur = curRef.current!;
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const noHover = window.matchMedia('(hover: none)').matches;
+      const q = <T extends Element>(s: string) => Array.from(hero.querySelectorAll<T>(s));
+      const state = { pos: 0, boost: 0, autoSpeed: reduced ? 0 : 1 };
+
+      // tira infinita: deriva sola y acelera con el scroll; el contenido baja con parallax
+      let lastY = window.scrollY || 0;
+      let hidden = false;
+      const tick = () => {
+        const dt = Math.min(0.05, gsap.ticker.deltaRatio(60) / 60);
+        const y = window.scrollY || 0;
+        const dy = y - lastY;
+        lastY = y;
+        const H = hero.offsetHeight || 1;
+        // ya tapado por la 2ª sección: no gastar frames
+        const covered = y > H * 1.05;
+        if (covered !== hidden) {
+          hidden = covered;
+          hero.style.visibility = covered ? 'hidden' : 'visible';
+        }
+        if (covered) return;
+        state.boost += (dy * 1.6 - state.boost) * (1 - Math.exp(-dt * 6));
+        state.pos += 42 * dt * state.autoSpeed + (reduced ? 0 : state.boost);
+        const setW = (track.firstElementChild as HTMLElement).offsetWidth || 1;
+        gsap.set(track, { x: -(((state.pos % setW) + setW) % setW) });
+        if (!reduced) {
+          const p = Math.min(1, Math.max(0, y / H));
+          gsap.set(bottom, { y: p * H * 0.12 });
+        }
+      };
+      gsap.ticker.add(tick);
+
+      if (!reduced) {
+        state.autoSpeed = 0;
+        gsap
+          .timeline({ defaults: { ease: 'expo.out' } })
+          .from(q('[data-card]'), { yPercent: -110, duration: 1.6, stagger: 0.04 }, 0)
+          .from(q('[data-cimg]'), { scale: 1.3, duration: 2.4, stagger: 0.04 }, 0.1)
+          .from(q('[data-letter]'), { yPercent: 110, duration: 1.4, stagger: 0.045 }, 0.5)
+          .from(q('[data-st]'), { y: 18, opacity: 0, filter: 'blur(6px)', duration: 1.1, stagger: 0.1, ease: 'power3.out' }, 0.9)
+          .from(q('[data-foot]'), { opacity: 0, y: 10, duration: 1, ease: 'power3.out' }, 1.1)
+          .to(state, { autoSpeed: 1, duration: 2.5, ease: 'sine.inOut' }, 1);
+      }
+
+      // cursor "View project" + títulos al hover
+      gsap.set(cur, { xPercent: -50, yPercent: -50, scale: 0, opacity: 0 });
+      const cx = gsap.quickTo(cur, 'x', { duration: 0.5, ease: 'power3.out' });
+      const cy = gsap.quickTo(cur, 'y', { duration: 0.5, ease: 'power3.out' });
+      if (noHover) gsap.set(q('[data-lab]'), { opacity: 1 });
+      const cleanups: (() => void)[] = [];
+      q<HTMLElement>('[data-card]').forEach((c) => {
+        const im = c.querySelector('[data-cimg]');
+        const lab = c.querySelector('[data-lab]');
+        const enter = (e: PointerEvent) => {
+          gsap.to(state, { autoSpeed: 0.1, duration: 0.8, ease: 'sine.out', overwrite: 'auto' });
+          gsap.to(im, { scale: 1.06, duration: 1.2, ease: 'expo.out', overwrite: 'auto' });
+          if (!noHover) gsap.fromTo(lab, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
+          gsap.set(cur, { x: e.clientX, y: e.clientY });
+          gsap.to(cur, { scale: 1, opacity: 1, duration: 0.5, ease: 'expo.out', overwrite: 'auto' });
+        };
+        const leave = () => {
+          gsap.to(state, { autoSpeed: 1, duration: 1.2, ease: 'sine.inOut', overwrite: 'auto' });
+          gsap.to(im, { scale: 1, duration: 1.2, ease: 'expo.out', overwrite: 'auto' });
+          if (!noHover) gsap.to(lab, { opacity: 0, y: 6, duration: 0.4, ease: 'power2.out', overwrite: 'auto' });
+          gsap.to(cur, { scale: 0, opacity: 0, duration: 0.35, ease: 'power2.in', overwrite: 'auto' });
+        };
+        c.addEventListener('pointerenter', enter);
+        c.addEventListener('pointerleave', leave);
+        cleanups.push(() => {
+          c.removeEventListener('pointerenter', enter);
+          c.removeEventListener('pointerleave', leave);
+        });
       });
+      const mv = (e: PointerEvent) => {
+        cx(e.clientX);
+        cy(e.clientY);
+      };
+      window.addEventListener('pointermove', mv, { passive: true });
+
+      return () => {
+        gsap.ticker.remove(tick);
+        window.removeEventListener('pointermove', mv);
+        cleanups.forEach((f) => f());
+      };
     },
-    { scope: scopeRef },
+    { scope: heroRef },
   );
 
-  // Swap titulares ↔ descripción según el progreso de las partículas
-  const handleProgress = (p: number) => {
-    const descEls = aboutRef.current?.querySelectorAll('[data-desc]');
-    const heads = [line1Ref.current, line2Ref.current].filter(Boolean);
-    if (!descEls) return;
-
-    if (p > 0.88 && !descShown.current) {
-      descShown.current = true;
-      gsap.to(descEls, { opacity: 1, y: 0, duration: 1.3, ease: 'power3.out', stagger: 0.13 });
-      gsap.to(heads, { opacity: 0, y: -40, duration: 0.9, ease: 'power2.out', stagger: 0.08 });
-    } else if (p < 0.78 && descShown.current) {
-      descShown.current = false;
-      gsap.to(descEls, { opacity: 0, y: 40, duration: 0.7, ease: 'power2.in', stagger: 0.06 });
-      gsap.to(heads, { opacity: 1, y: 0, duration: 1.1, ease: 'power3.out', stagger: 0.08 });
-    }
+  const goWorks = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const target = document.querySelector('#procesos') as HTMLElement | null;
+    if (!target) return;
+    if (lenis) lenis.scrollTo(target);
+    else target.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const headlineStyle: React.CSSProperties = {
-    fontWeight: 800,
-    fontSize: 'clamp(64px, 9.5vw, 164px)',
-    lineHeight: 0.94,
-    letterSpacing: '-0.045em',
-    textTransform: 'uppercase',
-    color: '#f4f3f1',
-  };
+  const cardStyle: React.CSSProperties = { position: 'relative', flex: 'none', display: 'flex', flexDirection: 'column', gap: 12, width: '26vw' };
 
   return (
-    <div
+    <section
       id="me"
-      ref={scopeRef}
+      ref={heroRef}
+      data-screen-label="Hero"
       style={{
-        position: 'relative',
-        width: '100%',
-        height: '500vh',
-        background: '#090906',
-        fontFamily: 'var(--font-main)',
-        color: '#f4f3f1',
+        position: 'sticky',
+        top: 0,
+        zIndex: 0,
+        height: '100svh',
+        minHeight: 560,
+        overflow: 'hidden',
+        background: '#E4E2DB',
+        color: '#111110',
+        fontFamily: mont,
+        WebkitFontSmoothing: 'antialiased',
       }}
     >
+      {/* grano (solo del hero) */}
+      <div aria-hidden className="hero-grain" style={{ position: 'absolute', inset: 0, zIndex: 40, pointerEvents: 'none', opacity: 0.08, mixBlendMode: 'multiply' }} />
+
+      {/* cursor "View project" */}
       <div
-        id="hero-root"
-        style={{
-          position: 'sticky',
-          top: 0,
-          width: '100%',
-          height: '100vh',
-          minHeight: 700,
-          overflow: 'hidden',
-          boxSizing: 'border-box',
-          backgroundColor: '#090906',
-        }}
+        ref={curRef}
+        aria-hidden
+        style={{ position: 'fixed', left: 0, top: 0, zIndex: 50, pointerEvents: 'none', background: '#F1E7A6', color: '#111110', borderRadius: 3, padding: '4px 18px', fontWeight: 600, fontSize: 20, letterSpacing: '-.01em', whiteSpace: 'nowrap' }}
       >
-        {/* particle stage */}
-        <div id="stage-frame" style={{ position: 'absolute', inset: 0, overflow: 'hidden', background: '#090906' }}>
-          <HeroParticles onProgress={handleProgress} />
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', boxShadow: 'inset 0 0 140px rgba(5, 5, 5, 0.55)' }} />
-
-          {/* About — reveal cerca del final */}
-          <div
-            id="about-block"
-            ref={aboutRef}
-            style={{
-              position: 'absolute',
-              left: 'clamp(28px, 5vw, 80px)',
-              bottom: 'clamp(28px, 8vh, 90px)',
-              maxWidth: 640,
-              zIndex: 2,
-            }}
-          >
-            <div
-              data-desc
-              style={{
-                fontSize: 13,
-                fontWeight: 700,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                color: '#8a8a8a',
-                marginBottom: 18,
-                opacity: 0,
-                transform: 'translateY(40px)',
-              }}
-            >
-              {t({ es: 'Acerca', en: 'About' })}
-            </div>
-            <div
-              data-desc
-              style={{
-                fontWeight: 700,
-                fontSize: 'clamp(24px, 2.5vw, 40px)',
-                lineHeight: 1.25,
-                letterSpacing: '-0.02em',
-                color: '#f4f3f1',
-                opacity: 0,
-                transform: 'translateY(40px)',
-              }}
-            >
-              {t({
-                es: 'Soy Laureano — desarrollador y diseñador independiente que crea experiencias digitales donde la forma se encuentra con el movimiento.',
-                en: "I'm Laureano — an independent designer & developer crafting digital experiences where form meets motion.",
-              })}
-            </div>
-            <div
-              data-desc
-              style={{ marginTop: 18, fontWeight: 500, fontSize: 15, color: '#9a9a9a', opacity: 0, transform: 'translateY(40px)' }}
-            >
-              {t({ es: 'Basado en Santa Fe. Trabajo a nivel mundial.', en: 'Based in Santa Fe. Working worldwide.' })}
-            </div>
-          </div>
-        </div>
-
-        {/* content */}
-        <div
-          className="hero-content"
-          style={{
-            position: 'relative',
-            zIndex: 2,
-            height: '100%',
-            boxSizing: 'border-box',
-            padding: '32px 48px',
-            display: 'flex',
-            flexDirection: 'column',
-            pointerEvents: 'none',
-          }}
-        >
-          <h1 id="headline-top" className="hero-line" style={{ margin: 'clamp(64px, 8vh, 96px) 0 0', marginLeft: 35, ...headlineStyle }}>
-            <span ref={line1Ref} data-reveal style={{ display: 'block', opacity: 0, transform: 'translateY(60px)' }}>
-              {t({ es: 'Forma &', en: 'Form &' })}
-            </span>
-          </h1>
-
-          <div style={{ flex: 1, minHeight: 0 }} />
-
-          <div id="headline-bottom" style={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <span
-              ref={line2Ref}
-              data-reveal
-              className="hero-line"
-              style={{ display: 'block', opacity: 0, transform: 'translateY(60px)', marginLeft: 35, marginRight: 35, ...headlineStyle }}
-            >
-              {t({ es: 'Movimiento', en: 'Motion' })}
-            </span>
-          </div>
-
-          <div
-            className="hero-meta"
-            data-reveal
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'baseline',
-              marginTop: 20,
-              fontSize: 15,
-              fontWeight: 700,
-              letterSpacing: '-0.01em',
-              color: '#f4f3f1',
-              opacity: 0,
-              transform: 'translateY(30px)',
-            }}
-          >
-            <span>©2026</span>
-            <span>Santa Fe, AR</span>
-            <span>Showreel 01</span>
-          </div>
-        </div>
-
-        {/* grain */}
-        <div
-          id="grain-layer"
-          style={{
-            position: 'absolute',
-            inset: '-10%',
-            zIndex: 3,
-            pointerEvents: 'none',
-            opacity: 0.08,
-            animation: 'grainShift 1.2s steps(6) infinite',
-            backgroundImage: GRAIN_BG,
-            backgroundSize: '300px 300px',
-          }}
-        />
-
-        {/* darkening veil */}
-        <div id="hero-dim" style={{ position: 'absolute', inset: 0, zIndex: 5, background: '#000', opacity: 0, pointerEvents: 'none', willChange: 'opacity' }} />
+        {t({ es: 'Ver proyecto', en: 'View project' })}
       </div>
 
-      {/* nav — fija, a nivel de scroll-root */}
-      <Nav />
+      {/* tira de proyectos */}
+      <div ref={stripRef} style={{ position: 'absolute', left: 0, right: 0, top: 0, height: '56svh', zIndex: 1, willChange: 'transform' }}>
+        <div ref={trackRef} style={{ display: 'flex', alignItems: 'flex-start', width: 'max-content', willChange: 'transform' }}>
+          {Array.from({ length: SETS }, (_, setIdx) => (
+            <div key={setIdx} aria-hidden={setIdx > 0 || undefined} style={{ display: 'flex', alignItems: 'flex-start' }}>
+              {PROJECTS.map((p, i) => (
+                <a key={p.title} data-card={i} href="#procesos" onClick={goWorks} tabIndex={setIdx > 0 ? -1 : undefined} style={cardStyle}>
+                  <span data-frame style={{ position: 'relative', display: 'block', height: '36svh', overflow: 'hidden', background: '#111110' }}>
+                    <span data-cimg style={{ position: 'absolute', inset: 0, display: 'block' }}>
+                      <Image src={p.src} alt={p.title} fill sizes="40vw" style={{ objectFit: 'cover' }} priority={setIdx === 0} />
+                    </span>
+                  </span>
+                  <span
+                    data-lab
+                    style={{ display: 'flex', alignItems: 'baseline', gap: 10, padding: '0 14px', opacity: 0, fontFamily: labelFont, fontSize: 'clamp(20px,1.7vw,30px)', lineHeight: 1, letterSpacing: '-.04em', textTransform: 'uppercase' }}
+                  >
+                    <span style={{ fontFamily: mont, fontWeight: 600, fontSize: 12, letterSpacing: 0 }}>{String(i + 1).padStart(2, '0')}</span>
+                    {p.title}
+                  </span>
+                </a>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {/* PORT / FOLIO — sube por encima del hero en el último tramo */}
-      <FolioScene />
-    </div>
+      {/* marca (arriba derecha) */}
+      <a href="#me" aria-label="Inicio" style={{ position: 'absolute', top: 'clamp(14px,1.6vw,24px)', right: 'clamp(14px,1.6vw,24px)', zIndex: 30, display: 'flex', alignItems: 'center', justifyContent: 'center', width: 52, height: 52, background: '#E4E2DB' }}>
+        <span style={{ display: 'block', width: 16, height: 22, borderLeft: '4px solid #111110', borderBottom: '4px solid #111110' }} />
+      </a>
+
+      {/* abajo: palabra + acerca + footer */}
+      <div ref={bottomRef} style={{ position: 'absolute', left: 0, right: 0, bottom: 0, zIndex: 10, display: 'flex', flexDirection: 'column', gap: 'clamp(14px,2.4svh,28px)', padding: '0 clamp(16px,2vw,40px) clamp(14px,2.4svh,26px)', willChange: 'transform' }}>
+        <div ref={mainRef} style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.7fr) minmax(0,1fr)', alignItems: 'end', gap: 'clamp(20px,3vw,56px)' }}>
+          <h1
+            ref={wordRef}
+            aria-label="Laure"
+            style={{ margin: 0, overflow: 'hidden', padding: '.04em 0 .02em', whiteSpace: 'nowrap', fontFamily: labelFont, fontWeight: 400, fontSize: 'clamp(96px,min(22vw,36svh),460px)', lineHeight: 0.8, letterSpacing: '-.065em', textTransform: 'uppercase' }}
+          >
+            {Array.from('Laure').map((ch, i) => (
+              <span key={i} data-letter aria-hidden style={{ display: 'inline-block', willChange: 'transform' }}>{ch}</span>
+            ))}
+          </h1>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16, paddingBottom: '.6em', maxWidth: 400, justifySelf: 'end', marginRight: 'clamp(24px,4vw,80px)' }}>
+            <span data-st style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 'clamp(15px,1.1vw,19px)', letterSpacing: '-.01em', textTransform: 'uppercase' }}>
+              <span style={{ display: 'block', width: 7, height: 7, borderRadius: '50%', background: '#111110' }} />
+              {t({ es: 'Acerca', en: 'About' })}
+            </span>
+            <p data-st style={{ margin: 0, fontSize: 'clamp(18px,1.4vw,26px)', lineHeight: 1.28, letterSpacing: '-.025em', textWrap: 'pretty' }}>
+              {t({
+                es: 'Soy Laureano — desarrollador y diseñador independiente que crea experiencias digitales donde la forma se encuentra con el movimiento.',
+                en: "I'm Laureano — an independent developer and designer crafting digital experiences where form meets motion.",
+              })}
+            </p>
+          </div>
+        </div>
+
+        <div data-foot style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '12px 24px', fontSize: 13, letterSpacing: '-.005em', textTransform: 'uppercase' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            <span>© 2026</span>
+            <span style={{ color: '#9A9891' }}>|</span>
+            <span>Santa Fe, Ar</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <button onClick={toggle} aria-label="Toggle language" style={{ fontSize: 14, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#111110', cursor: 'pointer' }}>
+              {lang === 'es' ? 'EN' : 'ES'}
+            </button>
+            <ContactButton />
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }

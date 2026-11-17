@@ -1,7 +1,9 @@
 'use client';
 
 import { useLanguage } from '@/lib/language';
+import Nav from '@/components/Nav';
 import HeroSection from '@/components/HeroSection';
+import FolioScene from '@/components/FolioScene';
 import WhiteSection from '@/components/WhiteSection';
 import StoriesSection from '@/components/StoriesSection';
 import ProcessSection from '@/components/ProcessSection';
@@ -11,7 +13,7 @@ import FooterSection from '@/components/FooterSection';
 
 /**
  * Orquesta las secciones en el orden del HTML original (portafolios.html).
- * HeroSection contiene el #scroll-root con Nav (fijo) y FolioScene anidado.
+ * HeroSection (v59) es sticky; el resto de las secciones lo cubren al scrollear.
  *
  * StoriesSection y ProcessSection manipulan el DOM de sus títulos de forma
  * imperativa (split de letras/caracteres para animar) por fuera de React, así
@@ -25,12 +27,17 @@ export default function Home() {
   return (
     <>
       <HeroSection />
-      <WhiteSection />
+      {/* El resto sube por encima del hero (sticky) y lo tapa; el Nav aparece acá. */}
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <Nav />
+        <FolioScene />
+        <WhiteSection />
       <StoriesSection key={`stories-${lang}`} />
       <ProcessSection key={`process-${lang}`} />
       <FaqSection />
       <CtaBand />
       <FooterSection />
+      </div>
     </>
   );
 }

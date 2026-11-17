@@ -12,11 +12,10 @@ const clamp01 = (x: number) => Math.min(1, Math.max(0, x));
 
 /**
  * FolioScene — "MY · PORT / FOLIO". Port fiel del HTML.
- * Escena negra de 200vh anidada en el #scroll-root del hero (absolute, bottom),
- * que sube por encima del hero. Scroll-driven (lerp 0.08): PORT/FOLIO convergen
+ * Segunda sección: escena negra de 200vh que sube por encima del hero (sticky). Scroll-driven (lerp 0.08): PORT/FOLIO convergen
  * (convergencia completa al 65%), foto central 3:4 escala 0→1 y rota entre 3
  * fotos cada 1.5s (crossfade lerp 0.12), "My" se abre a sfp>0.72, wobble+rotate
- * sinusoidal opuesto. Su tick además atenúa el brillo y desplaza el hero detrás.
+ * sinusoidal opuesto.
  */
 export default function FolioScene() {
   const { t } = useLanguage();
@@ -47,31 +46,17 @@ export default function FolioScene() {
       onScroll();
       window.addEventListener('scroll', onScroll, { passive: true });
 
-      // elementos del hero que este tick atenúa/desplaza
-      const heroRoot = document.getElementById('hero-root');
-      const dimTargets = () =>
-        document.querySelectorAll<HTMLElement>(
-          '#headline-top, #headline-bottom, #hero-root .hero-meta, #about-block, #canvas-host',
-        );
-
       const tick = () => {
         sfp += (fp - sfp) * 0.08;
         const c = Math.min(sfp / 0.65, 1);
         const e = smoothstep(c);
         const off = (1 - e) * 42; // vw
 
-        if (heroRoot) heroRoot.style.transform = `translateY(${-sfp * 22}vh)`;
-
         if (myTxt) {
           const mp = smoothstep(clamp01((sfp - 0.72) / 0.26));
           myTxt.style.maxWidth = `${mp * 1.6}em`;
           myTxt.style.opacity = String(mp);
         }
-
-        const dimVal = 1 - Math.min(sfp * 1.6, 0.85);
-        dimTargets().forEach((el) => {
-          el.style.filter = sfp > 0.01 ? `brightness(${dimVal})` : '';
-        });
 
         // rotación de fotos cada 1.5s
         const idx = Math.floor(performance.now() / 1500) % PHOTOS.length;
@@ -116,7 +101,7 @@ export default function FolioScene() {
       id="folio-scene"
       ref={sceneRef}
       aria-label={t({ es: 'Portafolio', en: 'Portfolio' })}
-      style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: '200vh', zIndex: 4 }}
+      style={{ position: 'relative', height: '200vh' }}
     >
       <div
         style={{

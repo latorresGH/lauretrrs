@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Hanken_Grotesk, Fredoka, Instrument_Serif } from 'next/font/google';
+import { Hanken_Grotesk, Montserrat, Fredoka, Instrument_Serif } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 import { LanguageProvider } from '@/lib/language';
@@ -11,6 +11,13 @@ import ContactModal from '@/components/ContactModal';
 const hanken = Hanken_Grotesk({
   variable: '--font-hanken',
   subsets: ['latin'],
+  display: 'swap',
+});
+
+const montserrat = Montserrat({
+  variable: '--font-montserrat',
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
   display: 'swap',
 });
 
@@ -36,6 +43,13 @@ const animo = localFont({
   weight: '250 990',
 });
 
+// Animo R600 estática — la usa el hero (v59).
+const animo600 = localFont({
+  variable: '--font-animo600',
+  display: 'swap',
+  src: '../public/fonts/HW Animo Trial/WEB/HWAnimoTRIAL-R600.woff2',
+});
+
 export const metadata: Metadata = {
   title: 'Laureano — Portfolio DSW',
   description:
@@ -54,7 +68,7 @@ export default function RootLayout({
   return (
     <html
       lang="es"
-      className={`${hanken.variable} ${fredoka.variable} ${instrument.variable} ${animo.variable}`}
+      className={`${hanken.variable} ${fredoka.variable} ${instrument.variable} ${animo.variable} ${animo600.variable} ${montserrat.variable}`}
     >
       <body>
         <LanguageProvider>
