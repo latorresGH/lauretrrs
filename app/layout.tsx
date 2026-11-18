@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Hanken_Grotesk, Montserrat, Fredoka, Instrument_Serif } from 'next/font/google';
+import { Hanken_Grotesk, Fredoka, Instrument_Serif } from 'next/font/google';
 import localFont from 'next/font/local';
 import './globals.css';
 import { LanguageProvider } from '@/lib/language';
@@ -14,11 +14,15 @@ const hanken = Hanken_Grotesk({
   display: 'swap',
 });
 
-const montserrat = Montserrat({
+// Montserrat self-hosted (evita el fetch a Google Fonts en el build de Vercel).
+const montserrat = localFont({
   variable: '--font-montserrat',
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
   display: 'swap',
+  src: [
+    { path: '../public/fonts/Montserrat/montserrat-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/Montserrat/montserrat-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/Montserrat/montserrat-latin-600-normal.woff2', weight: '600', style: 'normal' },
+  ],
 });
 
 const fredoka = Fredoka({
