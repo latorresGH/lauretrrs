@@ -6,8 +6,8 @@ import { useLanguage, type Localized } from '@/lib/language';
 const NAV_ITEMS: { label: Localized; href: string }[] = [
   { label: { es: 'Acerca', en: 'About' }, href: '#about' },
   { label: { es: 'Trabajo', en: 'Work' }, href: '#work' },
-  { label: { es: 'Proceso', en: 'Process' }, href: '#procesos' },
-  { label: { es: 'Servicios', en: 'Services' }, href: '#servicios' },
+  { label: { es: 'Proceso', en: 'Process' }, href: '#process' },
+  { label: { es: 'Servicios', en: 'Services' }, href: '#services' },
   { label: { es: 'Contacto', en: 'Contact' }, href: '#contacto' },
 ];
 

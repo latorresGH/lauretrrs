@@ -6,7 +6,7 @@ import HeroSection from '@/components/HeroSection';
 import FolioScene from '@/components/FolioScene';
 import EducacionSection from '@/components/EducacionSection';
 import StoriesSection from '@/components/StoriesSection';
-import ProcessSection from '@/components/ProcessSection';
+import ProcesoServiciosSection from '@/components/ProcesoServiciosSection';
 import FaqSection from '@/components/FaqSection';
 import CtaBand from '@/components/CtaBand';
 import FooterSection from '@/components/FooterSection';
@@ -33,7 +33,7 @@ export default function Home() {
         <FolioScene />
         <EducacionSection key={`edu-${lang}`} />
       <StoriesSection key={`stories-${lang}`} />
-      <ProcessSection key={`process-${lang}`} />
+      <ProcesoServiciosSection key={`ps-${lang}`} />
       <FaqSection />
       <CtaBand />
       <FooterSection />

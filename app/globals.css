@@ -321,3 +321,15 @@ ol {
     display: none !important;
   }
 }
+
+/* ---------- Proceso / Servicios (v6) ---------- */
+.ps-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.6fr) minmax(0, 3.4fr);
+}
+@media (max-width: 860px) {
+  .ps-row {
+    grid-template-columns: minmax(0, 1fr);
+    padding-bottom: 24px;
+  }
+}
