@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { useRevealOnScroll } from '@/lib/reveal';
 import { useLanguage, type Localized } from '@/lib/language';
+import { useLenis } from '@/lib/lenis';
 import Photo from './Photo';
 
 type LocalizedList = { es: string[]; en: string[] };
@@ -50,7 +51,6 @@ const SVC_NAMES: Localized[] = [
   { es: 'AfterPanch', en: 'AfterPanch' },
   { es: 'Tienda de Perfumes', en: 'Perfume Store' },
   { es: 'Stickeando', en: 'Stickeando' },
-  { es: 'SaaS Gastronómico', en: 'Restaurant SaaS' },
   { es: 'Turnero para Farmacias', en: 'Pharmacy Queue System' },
 ];
 
@@ -59,7 +59,6 @@ const SVC_IMAGES = [
   '/images/exp-afterpanch.jpg',
   '/images/exp-perfumes.jpg',
   '/images/exp-stickeando.jpg',
-  '/images/exp-saas.jpg',
   '/images/exp-turnero.jpg',
 ];
 
@@ -122,6 +121,14 @@ const svcTitle: React.CSSProperties = {
  */
 export default function StoriesSection() {
   const { t, lang } = useLanguage();
+  const lenis = useLenis();
+  const goServices = (e: React.MouseEvent) => {
+    e.preventDefault();
+    const target = document.querySelector('#services') as HTMLElement | null;
+    if (!target) return;
+    if (lenis) lenis.scrollTo(target);
+    else target.scrollIntoView({ behavior: 'smooth' });
+  };
   const scopeRef = useRef<HTMLElement>(null);
   const quoteRef = useRef<HTMLParagraphElement>(null);
   const roleRef = useRef<HTMLDivElement>(null);
@@ -130,7 +137,7 @@ export default function StoriesSection() {
   const svcListRef = useRef<HTMLDivElement>(null);
   const svcImgRef = useRef<HTMLDivElement>(null);
   const svcPhotoRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const svcTitleRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const svcTitleRefs = useRef<(HTMLElement | null)[]>([]);
 
   useRevealOnScroll(scopeRef);
 
@@ -262,6 +269,10 @@ export default function StoriesSection() {
     });
     const img = svcImgRef.current;
     const item = svcTitleRefs.current[idx];
+    if (img && idx >= SVC_NAMES.length) {
+      gsap.to(img, { opacity: 0, duration: 0.3, ease: 'power2.out' });
+      return;
+    }
     if (img && item && img.parentElement) {
       const listRect = img.parentElement.getBoundingClientRect();
       const itRect = item.getBoundingClientRect();
@@ -417,10 +428,6 @@ export default function StoriesSection() {
     >
       {/* título */}
       <div style={{ padding: 'clamp(100px, 15vh, 200px) clamp(28px, 4vw, 72px) 0' }}>
-        <h2 style={{ margin: 0, fontWeight: 800, fontSize: 'clamp(15px, 1.1vw, 18px)', letterSpacing: '0.26em', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: 14 }}>
-          <span style={{ display: 'inline-block', width: 9, height: 9, borderRadius: '50%', background: '#f4f3f1' }} />
-          {t({ es: 'Experiencia', en: 'Experience' })}
-        </h2>
       </div>
 
       <div className="st-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 0.85fr) 2.3fr', gap: 'clamp(32px, 4vw, 70px)', padding: 'clamp(48px, 7vh, 90px) clamp(28px, 4vw, 72px) clamp(80px, 12vh, 140px)' }}>
@@ -457,8 +464,9 @@ export default function StoriesSection() {
 
         {/* RIGHT: lista de servicios + imagen flotante */}
         <div style={{ position: 'relative' }} onMouseLeave={onSvcLeave}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, fontWeight: 700, color: '#8a8a8a' }}>
-            {t({ es: 'Freelance — E-commerce y SaaS', en: 'Freelance — E-commerce & SaaS' })}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 'clamp(18px, 1.6vw, 24px)', fontWeight: 700, color: '#8a8a8a' }}>
+            <span style={{ display: 'inline-block', width: 11, height: 11, borderRadius: '50%', background: '#f4f3f1' }} />
+            {t({ es: 'Experiencia', en: 'Experience' })}
           </div>
 
           <div ref={svcListRef} style={{ marginTop: 'clamp(24px, 4vh, 44px)', display: 'flex', flexDirection: 'column' }}>
@@ -475,12 +483,28 @@ export default function StoriesSection() {
                 {t(name)}
               </div>
             ))}
+            <a
+              href="#services"
+              ref={(el) => {
+                svcTitleRefs.current[SVC_NAMES.length] = el;
+              }}
+              onClick={goServices}
+              onMouseEnter={(e) => {
+                onSvcEnter(SVC_NAMES.length);
+                gsap.to(e.currentTarget, { x: 14, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
+              }}
+              onMouseLeave={(e) => gsap.to(e.currentTarget, { x: 0, duration: 0.5, ease: 'power3.out', overwrite: 'auto' })}
+              className="svc-name"
+              style={{ ...svcTitle, textDecoration: 'none' }}
+            >
+              {t({ es: 'Ver más', en: 'See more' })}
+            </a>
           </div>
 
           {/* imagen flotante */}
           <div
             ref={svcImgRef}
-            style={{ position: 'absolute', right: 0, top: 0, width: 'clamp(170px, 15vw, 260px)', aspectRatio: '3 / 4', borderRadius: 8, overflow: 'hidden', opacity: 0, pointerEvents: 'none', zIndex: 2, willChange: 'transform, opacity' }}
+            style={{ position: 'absolute', right: '-3vw', top: 0, width: 'clamp(190px, 17.5vw, 305px)', aspectRatio: '3 / 4', overflow: 'hidden', opacity: 0, pointerEvents: 'none', zIndex: 2, willChange: 'transform, opacity' }}
           >
             {SVC_NAMES.map((name, i) => (
               <div

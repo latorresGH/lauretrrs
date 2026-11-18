@@ -4,7 +4,7 @@ import { useLanguage } from '@/lib/language';
 import Nav from '@/components/Nav';
 import HeroSection from '@/components/HeroSection';
 import FolioScene from '@/components/FolioScene';
-import WhiteSection from '@/components/WhiteSection';
+import EducacionSection from '@/components/EducacionSection';
 import StoriesSection from '@/components/StoriesSection';
 import ProcessSection from '@/components/ProcessSection';
 import FaqSection from '@/components/FaqSection';
@@ -31,7 +31,7 @@ export default function Home() {
       <div style={{ position: 'relative', zIndex: 1 }}>
         <Nav />
         <FolioScene />
-        <WhiteSection />
+        <EducacionSection key={`edu-${lang}`} />
       <StoriesSection key={`stories-${lang}`} />
       <ProcessSection key={`process-${lang}`} />
       <FaqSection />
