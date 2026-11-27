@@ -1,10 +1,10 @@
 'use client';
 
 import { useRef } from 'react';
+import Link from 'next/link';
 import { gsap, useGSAP } from '@/lib/gsap';
 import { useRevealOnScroll } from '@/lib/reveal';
 import { useLanguage, type Localized } from '@/lib/language';
-import { useLenis } from '@/lib/lenis';
 import Photo from './Photo';
 
 const STORIES: { q: Localized; r: Localized }[] = [
@@ -79,14 +79,6 @@ const svcTitle: React.CSSProperties = {
  */
 export default function StoriesSection() {
   const { t, lang } = useLanguage();
-  const lenis = useLenis();
-  const goServices = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const target = document.querySelector('#services') as HTMLElement | null;
-    if (!target) return;
-    if (lenis) lenis.scrollTo(target);
-    else target.scrollIntoView({ behavior: 'smooth' });
-  };
   const scopeRef = useRef<HTMLElement>(null);
   const quoteRef = useRef<HTMLParagraphElement>(null);
   const roleRef = useRef<HTMLDivElement>(null);
@@ -317,12 +309,11 @@ export default function StoriesSection() {
                 {t(name)}
               </div>
             ))}
-            <a
-              href="#services"
+            <Link
+              href="/proyectos"
               ref={(el) => {
                 svcTitleRefs.current[SVC_NAMES.length] = el;
               }}
-              onClick={goServices}
               onMouseEnter={(e) => {
                 onSvcEnter(SVC_NAMES.length);
                 gsap.to(e.currentTarget, { x: 14, duration: 0.5, ease: 'power3.out', overwrite: 'auto' });
@@ -332,7 +323,7 @@ export default function StoriesSection() {
               style={{ ...svcTitle, textDecoration: 'none' }}
             >
               {t({ es: 'Ver más', en: 'See more' })}
-            </a>
+            </Link>
           </div>
 
           {/* imagen flotante */}

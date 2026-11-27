@@ -58,11 +58,10 @@ export const metadata: Metadata = {
   title: 'Laureano — Portfolio DSW',
   description:
     'Independent designer & developer crafting digital experiences where form meets motion.',
+  // Los íconos van por public/: Turbopack no puede decodificar el PNG interno
+  // de este .ico si se usa la convención app/favicon.ico.
   icons: {
-    icon: [
-      { url: '/favicon-dark.svg', media: '(prefers-color-scheme: dark)' },
-      { url: '/favicon-light.svg', media: '(prefers-color-scheme: light)' },
-    ],
+    icon: [{ url: '/icon.svg', type: 'image/svg+xml' }, { url: '/favicon.ico', sizes: 'any' }],
   },
 };
 
