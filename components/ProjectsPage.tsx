@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { gsap } from '@/lib/gsap';
 import { useLanguage, type Localized } from '@/lib/language';
-import { useContactModal } from '@/lib/contact-modal';
+import ContactButton from './ContactButton';
 
 type Project = { num: string; name: string; type: Localized; img: string };
 
@@ -70,7 +70,6 @@ export default function ProjectsPage() {
  */
 function ProjectsView() {
   const { t } = useLanguage();
-  const { open: openContact } = useContactModal();
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -151,13 +150,13 @@ function ProjectsView() {
         ? { top: '72px', left: '20px', right: 'auto', transform: 'none', flexDirection: 'row', gap: '22px' }
         : { top: '50%', left: 'auto', right: 'clamp(16px,2vw,40px)', transform: 'translateY(-50%)', flexDirection: 'column', gap: '6px' });
       set(q('[data-info]'), m
-        ? { top: 'auto', bottom: '96px', left: '20px', right: '20px', transform: 'none', width: 'auto', gap: '12px' }
+        ? { top: 'auto', bottom: '32px', left: '20px', right: '20px', transform: 'none', width: 'auto', gap: '12px' }
         : { top: '50%', bottom: 'auto', left: 'clamp(16px,3vw,56px)', right: 'auto', transform: 'translateY(-50%)', width: 'min(30vw,520px)', gap: 'clamp(16px,2.4vh,28px)' });
       set(q('[data-title]'), { fontSize: m ? 'clamp(40px,12vw,56px)' : 'clamp(40px,5.6vw,112px)' });
       set(q('[data-type]'), { fontSize: m ? '13px' : 'clamp(13px,1vw,15px)', maxWidth: m ? '30ch' : '34ch' });
       set(q('[data-stack]'), { top: m ? '41%' : '50%' });
       cards.forEach((c) => set(c, { width: m ? '58vw' : 'clamp(220px,23vw,400px)' }));
-      set(q('[data-counter]'), m ? { bottom: '30px', right: '20px' } : { bottom: 'clamp(24px,5vh,48px)', right: 'clamp(16px,3vw,56px)' });
+      set(q('[data-counter]'), m ? { display: 'none' } : { display: 'flex', bottom: 'clamp(24px,5vh,48px)', right: 'clamp(16px,3vw,56px)' });
       set(q('[data-hint]'), { display: m ? 'none' : 'block' });
       set(q('[data-list]'), {
         paddingTop: m ? '128px' : 'clamp(120px,18vh,180px)',
@@ -179,12 +178,11 @@ function ProjectsView() {
         fontSize: m ? '13px' : 'clamp(12px,1vw,14px)',
       }));
       qa('[data-rimg]').forEach((o) => set(o, { display: m ? 'block' : 'none' }));
-      set(q('[data-contact]'), { paddingLeft: m ? '14px' : '18px', gap: m ? '10px' : '14px' });
     };
     applyLayout();
     on(window, 'resize', applyLayout);
 
-    // --- hover de las opciones de vista y del botón contacto ---
+    // --- hover de las opciones de vista ---
     qa<HTMLButtonElement>('[data-mode]').forEach((b) => {
       const rl = b.querySelectorAll('[data-roll]');
       on(b, 'pointerenter', () => {
@@ -196,17 +194,6 @@ function ProjectsView() {
         if (b.dataset.mode !== mode) b.style.color = '#5A5955';
       });
       on(b, 'click', () => setMode(b.dataset.mode as 'cine' | 'list'));
-    });
-    const ct = q('[data-contact]'), cts = qa('[data-ct]'), cas = qa('[data-ca]');
-    on(ct, 'pointerenter', () => {
-      gsap.to(cts, { yPercent: -100, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
-      gsap.fromTo(cas[0], { x: '0%', y: '0%' }, { x: '100%', y: '-100%', duration: 0.45, ease: 'power3.in', overwrite: 'auto' });
-      gsap.fromTo(cas[1], { x: '-100%', y: '100%' }, { x: '0%', y: '0%', duration: 0.6, delay: 0.15, ease: 'expo.out', overwrite: 'auto' });
-    });
-    on(ct, 'pointerleave', () => {
-      gsap.to(cts, { yPercent: 0, duration: 0.6, ease: 'expo.out', overwrite: 'auto' });
-      gsap.to(cas[1], { x: '-100%', y: '100%', duration: 0.35, ease: 'power2.in', overwrite: 'auto' });
-      gsap.fromTo(cas[0], { x: '100%', y: '-100%' }, { x: '0%', y: '0%', duration: 0.55, delay: 0.1, ease: 'expo.out', overwrite: 'auto' });
     });
 
     on(window, 'pointermove', ((e: PointerEvent) => {
@@ -474,21 +461,8 @@ function ProjectsView() {
         >
           Laure
         </Link>
-        <a
-          data-contact
-          href="#contacto"
-          onClick={(e) => { e.preventDefault(); openContact(); }}
-          style={{ display: 'flex', alignItems: 'center', gap: 14, background: '#F4F3F1', color: '#090906', padding: '6px 6px 6px 18px', fontWeight: 600, fontSize: 13, textTransform: 'uppercase' }}
-        >
-          <span style={{ display: 'block', overflow: 'hidden', height: '1.2em', lineHeight: '1.2em' }}>
-            <span data-ct style={{ display: 'block' }}>{t({ es: 'Contacto', en: 'Contact' })}</span>
-            <span data-ct aria-hidden style={{ display: 'block' }}>{t({ es: 'Contacto', en: 'Contact' })}</span>
-          </span>
-          <span style={{ position: 'relative', display: 'block', width: 34, height: 34, background: '#D9D7D0', overflow: 'hidden' }}>
-            <span data-ca style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15 }}>↗</span>
-            <span data-ca aria-hidden style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 15, transform: 'translate(-100%,100%)' }}>↗</span>
-          </span>
-        </a>
+        {/* mismo botón que el header de la home */}
+        <ContactButton />
       </header>
 
       <nav
